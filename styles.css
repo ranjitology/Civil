@@ -13,7 +13,7 @@ body {
     margin-top: 50px;
 }
 
-input, button {
+input, select, button {
     width: 90%;
     padding: 10px;
     margin: 10px;
