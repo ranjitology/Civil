@@ -1,8 +1,10 @@
 function evaluateFunction(expression, x) {
     try {
-        return eval(expression.replace(/x/g, `(${x})`));
+        let func = expression.replace(/x/g, `(${x})`); // Replace x with actual value
+        return Function(`"use strict"; return (${func})`)(); // Secure eval
     } catch (error) {
-        return NaN;
+        console.error("Invalid function input:", error);
+        return NaN; // Return NaN if the function is invalid
     }
 }
 
@@ -13,6 +15,10 @@ function secantMethod(expression, x0, x1, tol, maxIter) {
     for (let i = 0; i < maxIter; i++) {
         let f_x0 = evaluateFunction(expression, x0);
         let f_x1 = evaluateFunction(expression, x1);
+
+        if (isNaN(f_x0) || isNaN(f_x1)) {
+            return "Error: Invalid function. Check syntax!";
+        }
 
         if (Math.abs(f_x1 - f_x0) < 1e-10) {
             return "Division by zero detected. Change initial guesses.";
@@ -36,11 +42,16 @@ function secantMethod(expression, x0, x1, tol, maxIter) {
 }
 
 function solveSecant() {
-    let func = document.getElementById("function").value;
+    let func = document.getElementById("function").value.trim();
     let x0 = parseFloat(document.getElementById("x0").value);
     let x1 = parseFloat(document.getElementById("x1").value);
     let tol = parseFloat(document.getElementById("tol").value);
     let maxIter = parseInt(document.getElementById("maxIter").value);
+
+    if (!func || isNaN(x0) || isNaN(x1) || isNaN(tol) || isNaN(maxIter)) {
+        document.getElementById("output").innerText = "Error: Please enter valid inputs!";
+        return;
+    }
 
     let result = secantMethod(func, x0, x1, tol, maxIter);
     document.getElementById("output").innerText = result;
